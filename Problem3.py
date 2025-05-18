@@ -1,0 +1,40 @@
+import math
+
+def f(x):
+    return x**2 * math.sin(x)
+
+c = 0
+d = 1
+m = 16
+S = 4
+step = (d - c) / (2 * m - 1)
+x = [(c + i * step) for i in range(2 * m)]
+z = [math.pi * (2 * (x - c) / (d - c) - 1) for x in x]
+
+a = [0.0] * (S + 1)
+b = [0.0] * (S + 1)
+
+for i in range(S + 1):
+    k = i
+    for j in range(2 * m):
+        a[k] += f(x[j]) * math.cos(k * z[j]) / m
+        b[k] += f(x[j]) * math.sin(k * z[j]) / m
+        
+def S4(z):
+    return 0.5 * a[0] + sum(a[k] * math.cos(k * z) + b[k] * math.sin(k * z) for k in range(1 , S + 1))
+    
+print(f"(a)\na0 = {a[0]:.4f}")
+for i in range(S):
+    num = i + 1
+    print(f"a{num} = {a[num]:.4f} , b{num} = {b[num]:.4f}")
+    
+Ans = sum(S4(z[i]) / (2 * m - 1) for i in range(2 * m - 1))
+print(f"(b)\nAns: {Ans:.4f}")
+    
+Real = math.cos(1) + 2 * math.sin(1) - 2
+Ab = abs(Real - Ans)
+Re = Ab / Real * 100
+print(f"(c)\nAbsolute: {Ab:.4f} , Relative: {Re:.4f}%")
+
+E = sum((f(x[i]) - S4(z[i]))**2 for i in range(2 * m))
+print(f"(d)\nError: {E:.4f}")
